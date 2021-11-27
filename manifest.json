@@ -1,0 +1,20 @@
+{
+  "name": "peer whiteboard",
+  "version": "0.0.1",
+  "manifest_version": 2,
+  "description": "",
+  "icons": {
+    "128": "assets/images/icon.png"
+  },
+  "permissions": [],
+  "browser_action": {
+    "default_icon": "assets/images/icon.png",
+    "default_popup": "dist/index.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*/*"],
+      "js": ["dist/contentScript.js"]
+    }
+  ]
+}
