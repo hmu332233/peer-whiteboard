@@ -6,7 +6,8 @@
   "author": "minung.han <hmu332233@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "parcel src/index.html"
+    "start": "parcel build --public-url ./ src/index.html src/contentScript.ts",
+    "move": "rm -rf /mnt/d/workspace/peer-whiteboard/dist; cp -r dist /mnt/d/workspace/peer-whiteboard/"
   },
   "devDependencies": {
     "parcel-bundler": "^1.12.5",

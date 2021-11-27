@@ -7,6 +7,7 @@ function Cursor({
   $element.innerText = name;
   $element.style.position = 'absolute';
   $element.style.zIndex = '99999';
+  $element.style.pointerEvents = 'none';
 
   const move = ({ x, y }: { x: number, y: number }) => {
     $element.style.left = `${x}px`;
@@ -22,7 +23,7 @@ function Cursor({
 
 const myCursor = Cursor({ name: 'test' });
 
-document.body.addEventListener("mousemove", updateDisplay, false);
+document.body.addEventListener("mousemove", optimizeScroll(updateDisplay), false);
 
 function updateDisplay(event) {
   myCursor.move({
@@ -34,3 +35,18 @@ function updateDisplay(event) {
 document.body.append(myCursor.element);
 
 console.log('create!')
+
+
+
+function optimizeScroll(callback) {
+  let ticking = false;
+  return () => {
+    if (!ticking) {
+      window.requestAnimationFrame(() => {
+        callback();
+        ticking = false;
+      });
+      ticking = true;
+    }
+  };
+};
