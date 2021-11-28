@@ -24,7 +24,7 @@ function Cursor({
 
 const myCursor = Cursor({ name: 'test' });
 
-function updateDisplay(event) {
+function updateDisplay(event: MouseEvent) {
   myCursor.move({
     x: event.pageX,
     y: event.pageY,
@@ -35,3 +35,11 @@ document.body.addEventListener("mousemove", optimizeScroll(updateDisplay), false
 document.body.append(myCursor.element);
 
 console.log('create!')
+
+
+chrome.runtime.onMessage.addListener(
+  (message, sender, sendResponse) => {
+    const { key, payload } = message;
+    console.log(message);
+  }
+);

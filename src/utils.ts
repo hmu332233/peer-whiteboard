@@ -1,9 +1,9 @@
-export function optimizeScroll(callback) {
+export const optimizeScroll = (callback) => {
   let ticking = false;
-  return () => {
+  return (event) => {
     if (!ticking) {
       window.requestAnimationFrame(() => {
-        callback();
+        callback(event);
         ticking = false;
       });
       ticking = true;
