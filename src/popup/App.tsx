@@ -4,18 +4,6 @@ import { initPeer } from './peer';
 
 import { sendMessage } from './utils/chrome';
 
-
-chrome.runtime.onConnect.addListener(port => {
-  if (port.name === 'peer-whiteboard') {
-    port.onMessage.addListener(message => {
-      console.log(message);
-        // if (message === `How are you?`) {
-        //     port.postMessage(`I'm fine thank you and you?`);
-        // }
-    });
-  }
-});
-
 const peer = initPeer(); 
 
 function App() {
@@ -24,12 +12,28 @@ function App() {
 
   useEffect(() => {
     peer.subscribeOpen(
-      (id: string) => setPeerId(id),
+      (id: string) => {
+        setPeerId(id);
+        sendMessage({ key: 'init' });
+      },
     );
-    peer.subscribeDataReceive(({ key, payload }) => {
-      sendMessage({ key, payload });
+
+    chrome.runtime.onConnect.addListener(port => {
+      if (port.name === 'peer-whiteboard') {
+        // port로부터 도착한 메세지를 peer로 전송
+        port.onMessage.addListener(message => {
+          peer.send(message);
+        });
+        
+        // peer로부터 도착한 메세지를 port로 전송
+        peer.subscribeDataReceive(({ key, payload }) => {
+          port.postMessage({ key, payload });
+        });
+      }
     });
   }, []);
+
+  
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { currentTarget: { value } } = e;

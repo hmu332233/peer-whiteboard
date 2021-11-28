@@ -24,13 +24,12 @@ export const initPeer = () => {
   
   myPeer.on('connection', (connection) => {
     peerConnection = connection;
-    window.peerConnection = connection;
     initConnection(connection, onDataReceive);
   });
 
   const connect = (id) => {
     const connection = myPeer.connect(id);
-    window.peerConnection = connection;
+    peerConnection = connection;
     initConnection(connection, onDataReceive);
   }
 

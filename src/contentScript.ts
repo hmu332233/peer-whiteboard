@@ -1,10 +1,6 @@
 import { optimizeScroll } from './utils';
 
-const port = chrome.runtime.connect({ name: 'peer-whiteboard' });
-
-port.onMessage.addListener(message => {
-    console.log(message);
-});
+let port;
 
 type CursorProps = { name: string };
 function Cursor({
@@ -34,22 +30,33 @@ function updateDisplay(event: MouseEvent) {
     x: event.pageX,
     y: event.pageY,
   });
-  port.postMessage({ key: 'mousemove', payload: {
-    x: event.pageX,
-    y: event.pageY,
-  }});
+  if (port) {
+    port.postMessage({
+      key: 'mousemove',
+      payload: {
+        x: event.pageX,
+        y: event.pageY,
+      }
+    });
+  }
 }
 
 document.body.addEventListener("mousemove", optimizeScroll(updateDisplay), false);
 document.body.append(myCursor.element);
 
-console.log('create!')
-
-
 chrome.runtime.onMessage.addListener(
   (message, sender, sendResponse) => {
     const { key, payload } = message;
     console.log(message);
+
+    switch (key) {
+      case 'init': {
+        port = chrome.runtime.connect({ name: 'peer-whiteboard' });
+        port.onMessage.addListener(message => {
+          console.log('port', message);
+        });
+      }
+    }
   }
 );
 
