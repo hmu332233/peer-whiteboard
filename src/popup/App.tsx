@@ -4,6 +4,18 @@ import { initPeer } from './peer';
 
 import { sendMessage } from './utils/chrome';
 
+
+chrome.runtime.onConnect.addListener(port => {
+  if (port.name === 'peer-whiteboard') {
+    port.onMessage.addListener(message => {
+      console.log(message);
+        // if (message === `How are you?`) {
+        //     port.postMessage(`I'm fine thank you and you?`);
+        // }
+    });
+  }
+});
+
 const peer = initPeer(); 
 
 function App() {
