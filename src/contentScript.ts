@@ -23,7 +23,8 @@ function Cursor({
   }
 }
 
-const myCursor = Cursor({ name: 'test' });
+const myCursor = Cursor({ name: 'me' });
+const peerCursor = Cursor({ name: 'peer' });
 
 function updateDisplay(event: MouseEvent) {
   myCursor.move({
@@ -43,6 +44,7 @@ function updateDisplay(event: MouseEvent) {
 
 document.body.addEventListener("mousemove", optimizeScroll(updateDisplay), false);
 document.body.append(myCursor.element);
+document.body.append(peerCursor.element);
 
 chrome.runtime.onMessage.addListener(
   (message, sender, sendResponse) => {
@@ -54,6 +56,13 @@ chrome.runtime.onMessage.addListener(
         port = chrome.runtime.connect({ name: 'peer-whiteboard' });
         port.onMessage.addListener(message => {
           console.log('port', message);
+          const { key, payload } = message;
+          switch (key) {
+            case 'mousemove': {
+              const { x, y } = payload;
+              peerCursor.move({ x, y });
+            }
+          }
         });
       }
     }
