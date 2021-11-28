@@ -1,3 +1,5 @@
+import { optimizeScroll } from './utils';
+
 
 type CursorProps = { name: string };
 function Cursor({
@@ -12,7 +14,6 @@ function Cursor({
   const move = ({ x, y }: { x: number, y: number }) => {
     $element.style.left = `${x}px`;
     $element.style.top = `${y}px`;
-    console.log(x, y);
   }
 
   return {
@@ -23,8 +24,6 @@ function Cursor({
 
 const myCursor = Cursor({ name: 'test' });
 
-document.body.addEventListener("mousemove", optimizeScroll(updateDisplay), false);
-
 function updateDisplay(event) {
   myCursor.move({
     x: event.pageX,
@@ -32,21 +31,7 @@ function updateDisplay(event) {
   });
 }
 
+document.body.addEventListener("mousemove", optimizeScroll(updateDisplay), false);
 document.body.append(myCursor.element);
 
 console.log('create!')
-
-
-
-function optimizeScroll(callback) {
-  let ticking = false;
-  return () => {
-    if (!ticking) {
-      window.requestAnimationFrame(() => {
-        callback();
-        ticking = false;
-      });
-      ticking = true;
-    }
-  };
-};
