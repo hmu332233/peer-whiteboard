@@ -9,19 +9,19 @@ function Cursor({
   const $element = document.createElement('div');
   $element.style.position = 'absolute';
   $element.style.zIndex = '99999';
-  $element.style.pointerEvents = 'none';
-  // TODO: transform 기반으로 변경
-  // $element.style.willChange = 'transform'
+  $element.style.top = '0';
+  $element.style.left = '0';
 
-  $element.innerHTML = `
+  const $cursor = document.createElement('div');
+  $cursor.style.willChange = 'transform';
+  $cursor.innerHTML = `
     <div style="position: absolute; top: 10px; left: 10px; padding: 4px 8px; background: #efefef; border-radius: 50%; border-top-left-radius: 0;">${name}</div>
   `;
 
+  $element.appendChild($cursor);
 
   const move = ({ x, y }: { x: number, y: number }) => {
-    $element.style.left = `${x}px`;
-    $element.style.top = `${y}px`;
-    // transform: translate3d(1009px, 526px, 0px);
+    $cursor.style.transform = `translate3d(${x}px, ${y}px, 0px)`;
   }
 
   return {
@@ -29,6 +29,8 @@ function Cursor({
     move,
   }
 }
+
+
 
 chrome.runtime.onMessage.addListener(
   (message, sender, sendResponse) => {
