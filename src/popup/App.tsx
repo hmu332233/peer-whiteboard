@@ -7,6 +7,7 @@ import { sendMessage } from './utils/chrome';
 const peer = initPeer();
 
 function App() {
+  const [isConnected, setIsConnected] = useState(false);
   const [peerId, setPeerId] = useState('');
   const [value, setValue] = useState('');
 
@@ -28,6 +29,13 @@ function App() {
         // peer로부터 도착한 메세지를 port로 전송
         peer.subscribeDataReceive(({ key, payload }) => {
           port.postMessage({ key, payload });
+
+          switch (key) {
+            case 'connected': {
+              setIsConnected(true);
+              break;
+            }
+          }
         });
       }
     });
@@ -42,6 +50,7 @@ function App() {
 
   const handleButtonClick = () => {
     peer.connect(value);
+    setIsConnected(true);
   }
 
   return (
@@ -66,7 +75,9 @@ function App() {
             <input className="input" onChange={handleChange} value={value} />
           </div>
         </div>
-        <button className="button is-primary" onClick={handleButtonClick}>연결</button>
+        <button className="button is-primary" onClick={handleButtonClick} disabled={isConnected}>
+          {isConnected ? '연결 중' : '연결'}
+        </button>
       </section>
     </div>
   );
