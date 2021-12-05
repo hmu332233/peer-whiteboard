@@ -32,7 +32,9 @@ function App() {
 
           switch (key) {
             case 'connected': {
+              const { id } = payload;
               setIsConnected(true);
+              setValue(id);
               break;
             }
           }
