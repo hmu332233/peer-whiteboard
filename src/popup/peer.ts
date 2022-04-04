@@ -8,7 +8,11 @@ namespace PeerFunc {
 }
 
 export const initPeer = () => {
-  const myPeer = new Peer();
+  const myPeer = new Peer({
+    secure:true,
+    host: process.env.PEER_SERVER,
+    port: 443
+  });
   let peerConnection: Peer.DataConnection | null;
   let onConnectionOpen: PeerFunc.onConnectionOpen | null;
   let onDataReceive: PeerFunc.onDataReceive | null;

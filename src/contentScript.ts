@@ -1,4 +1,4 @@
-import { optimizeScroll } from './utils';
+import { optimizeScroll, getSelectorFromCursor } from './utils';
 
 let port: chrome.runtime.Port;
 
@@ -30,8 +30,6 @@ function Cursor({
   }
 }
 
-
-
 chrome.runtime.onMessage.addListener(
   (message, sender, sendResponse) => {
     const { key, payload } = message;
@@ -40,6 +38,8 @@ chrome.runtime.onMessage.addListener(
       case 'init': {
         const myCursor = Cursor({ name: 'me' });
         const peerCursor = Cursor({ name: 'peer' });
+
+        let peerHighlightElement; // NOTE: 컨셉 코드 (삭제 필요)
         
         const updateDisplay = (event: MouseEvent) => {
           myCursor.move({
@@ -52,6 +52,7 @@ chrome.runtime.onMessage.addListener(
               payload: {
                 x: event.pageX,
                 y: event.pageY,
+                selector: getSelectorFromCursor(event.clientX, event.clientY),
               }
             });
           }
@@ -69,8 +70,21 @@ chrome.runtime.onMessage.addListener(
               break;
             }
             case 'mousemove': {
-              const { x, y } = payload;
-              peerCursor.move({ x, y });
+              peerHighlightElement?.classList.remove('mu-active'); // NOTE: 컨셉 코드 (삭제 필요)
+
+              const { x, y, selector } = payload;
+              const element = document.querySelector(selector);
+              
+              if (!element) {
+                return;
+              }
+              peerHighlightElement = element; // NOTE: 컨셉 코드 (삭제 필요)
+              element.classList.add('mu-active'); // NOTE: 컨셉 코드 (삭제 필요)
+
+              const rect = element.getBoundingClientRect(); // NOTE: 컨셉 코드 (삭제 필요)
+              console.log('rect', rect); // NOTE: 컨셉 코드 (삭제 필요)
+              peerCursor.move({ x: rect.left, y: rect.top }); // NOTE: 컨셉 코드 (삭제 필요)
+              // peerCursor.move({ x, y });
               break;
             }
           }
